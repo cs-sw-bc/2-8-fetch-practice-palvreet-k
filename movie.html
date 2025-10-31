@@ -1,19 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>🎬 OMDb Movie Search</title>
 </head>
+
 <body>
   <h1>🎥 Movie Search App</h1>
 
   <!-- Students will connect this with JavaScript -->
   <input id="movieInput" type="text" placeholder="Enter movie name">
+  <label for="movieType">Choose a movie genre:</label>
+  <select name="movieType" id="movieType">
+    <option value="">--Please choose an option--</option>
+    <option value="movie">Movie</option>
+    <option value="series">Series</option>
+    <option value="episode">Episode</option>
+  </select>
   <button onclick="searchMovie()">Search</button>
 
   <!-- Optional Challenge: Add dropdown for type (movie, series, episode) -->
 
-  <div id="result"></div>
+  <div id="result">
+    <p id="name"></p>
+    <p id="type"></p>
+    <p id="year"></p>
+  </div>
 
   <script>
     // Step 1: Create a function named searchMovie()
@@ -23,6 +36,31 @@
     // Step 5: Display results inside the "result" div
     // Step 6: Handle cases where movie not found
     // Step 7 (Challenge): Add dropdown for movie type and include in API URL
+    function displayMovie(data) {
+      console.log(data);
+      document.getElementById("name").textContent = `Movie name: ${data.Title}`;
+      document.getElementById("type").textContent = `Movie Type: ${data.Type}`;
+      document.getElementById("year").textContent = `Year: ${data.Year}`;
+    }
+
+    function searchMovie() {
+      const movName = document.getElementById("movieInput").value.trim();
+      const movType = document.getElementById('movieType').value;
+
+      fetch(`http://www.omdbapi.com/?apikey=e3559426&t=${movName}&type=${movType}`)
+        .then(response => response.json())
+        .then(movSearch => 
+        {if (movSearch.Response== "False"){
+          throw new Error(`${movSearch.Error}`)
+        }
+          displayMovie(movSearch);
+        })
+        .catch(err => {console.error(err);
+          document.getElementById('result').innerHTML = `${err.message}`
+        })
+
+    }
   </script>
 </body>
+
 </html>
